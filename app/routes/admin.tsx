@@ -21,7 +21,14 @@ export const loader: LoaderFunction = async ({ request }) => {
   });
   // Fetch all tickets
   const tickets = await prisma.ticket.findMany({
-    include: { customer: true, responses: true }, // Include customer info and replies
+    include: {
+      customer: true,
+      responses: {
+        include: {
+          admin: { select: { id: true, name: true, email: true } }, // Include admin user details
+        },
+      },
+    }, // Include customer info and replies
     orderBy: { createdAt: "desc" },
   });
 
@@ -93,7 +100,7 @@ export default function AdminDashboard() {
                     <li key={index} className="border-l-4 pl-2 mt-1">
                       {resp.message} -{" "}
                       <span className="text-gray-500">
-                        {resp.responderRole}
+                        {resp.admin ? resp.admin.name : "System"}
                       </span>
                     </li>
                   ))
