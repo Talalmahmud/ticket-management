@@ -1,40 +1,68 @@
-# Welcome to Remix!
+# Ticket Management System
 
-- 📖 [Remix docs](https://remix.run/docs)
+This is a **Ticket Management System** built using **Remix, TypeScript, MySQL, Prisma, and Tailwind CSS**. Customers can create and track tickets, while admins can view and respond to them.
 
-## Development
+## Features
+- **User Authentication**: Customers and admins can log in.
+- **Ticket Management**: Customers can create tickets and view responses.
+- **Admin Dashboard**: Admins can view and reply to customer tickets.
+- **MySQL Database**: Managed with Prisma ORM.
+- **Session Management**: Handled via cookies.
+- **Role-Based Access**: Different views for customers and admins.
 
-Run the dev server:
+## Prerequisites
+Ensure you have the following installed:
+- **Node.js** (v18 or later)
+- **MySQL** (running locally or via a cloud provider)
 
-```shellscript
-npm run dev
-```
+## Installation
+1. **Clone the Repository:**
+   ```sh
+   git clone https://github.com/your-username/ticket-management.git
+   cd ticket-management
+   ```
+
+2. **Install Dependencies:**
+   ```sh
+   npm install
+   ```
+
+3. **Configure Environment Variables:**
+   Create a `.env` file in the root directory and add:
+   ```env
+   DATABASE_URL="mysql://user:password@localhost:3306/ticket_db"
+   SESSION_SECRET="your-secret-key"
+   ```
+
+4. **Setup Database:**
+   ```sh
+   npx prisma migrate dev --name init
+   npx prisma generate
+   ```
+
+5. **Run the Development Server:**
+   ```sh
+   npm run dev
+   ```
+   The app should now be running at `http://localhost:3000`.
+
+## Usage
+### Customer
+- **Sign up & log in**
+- **Create a ticket**
+- **View tickets & admin replies**
+
+### Admin
+- **Log in as an admin**
+- **View all tickets**
+- **Reply to tickets**
 
 ## Deployment
+To deploy, use **Vercel, Railway, or any Node.js hosting service**. Ensure your **MySQL database** is accessible remotely and update `DATABASE_URL` accordingly.
 
-First, build your app for production:
+## License
+This project is licensed under the MIT License.
 
-```sh
-npm run build
-```
+---
+Need help? Feel free to reach out! 🚀
 
-Then run the app in production mode:
-
-```sh
-npm start
-```
-
-Now you'll need to pick a host to deploy it to.
-
-### DIY
-
-If you're familiar with deploying Node applications, the built-in Remix app server is production-ready.
-
-Make sure to deploy the output of `npm run build`
-
-- `build/server`
-- `build/client`
-
-## Styling
-
-This template comes with [Tailwind CSS](https://tailwindcss.com/) already configured for a simple default starting experience. You can use whatever css framework you prefer. See the [Vite docs on css](https://vitejs.dev/guide/features.html#css) for more information.
