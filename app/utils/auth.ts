@@ -14,7 +14,6 @@ authenticator.use(
     const password = form.get("password") as string | null;
 
     const user = await prisma.user.findUnique({ where: { email } });
-    console.log("user", user);
     if (!user) throw new Error("User not found");
 
     if (!password) throw new Error("Password is required");

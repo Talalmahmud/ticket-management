@@ -108,7 +108,7 @@ export default function UserDashboard() {
                 {ticket.responses.length === 0 ? (
                   <li className="text-gray-500">No replies yet.</li>
                 ) : (
-                  ticket.responses.map((resp, index) => (
+                  ticket.responses.map((resp, index: number) => (
                     <li key={index} className="border-l-4 pl-2 mt-1">
                       {resp.message} -{" "}
                       <span className="text-gray-500">

@@ -1,15 +1,26 @@
 import { ActionFunction, LoaderFunction } from "@remix-run/node";
-import { Form, Link, redirect } from "@remix-run/react";
+import { Form, Link, redirect, useActionData } from "@remix-run/react";
 import { authenticator } from "~/utils/auth";
 import { commitSession, getSession, sessionStorage } from "~/utils/session";
 
+type ActionData = {
+  error?: string;
+};
+
 export default function Login() {
+  const actionData = useActionData<ActionData>(); // Get data from action, including errors
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-100">
       <div className="w-full max-w-md p-8 space-y-6 bg-white shadow-lg rounded-2xl">
         <h2 className="text-2xl font-bold text-center text-gray-800">
           Sign In
         </h2>
+        {actionData?.error && (
+          <div className="text-red-500 text-sm text-center mb-4">
+            {actionData.error}
+          </div>
+        )}
         <Form method="post" className="space-y-4">
           <div>
             <label
