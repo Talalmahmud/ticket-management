@@ -1,14 +1,51 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  CUSTOMER
+}
+
+enum TicketStatus {
+  OPEN
+  RESOLVED
+  CLOSED
+}
+
+model User {
+  id        String           @id @default(uuid())
+  name      String
+  email     String           @unique
+  password  String
+  role      Role             @default(CUSTOMER)
+  tickets   Ticket[]         @relation("CustomerTickets") // User's created tickets
+  responses TicketResponse[]
+}
+
+model Ticket {
+  id          String           @id @default(uuid())
+  subject     String
+  description String
+  status      TicketStatus     @default(OPEN)
+  customerId  String
+  customer    User             @relation("CustomerTickets", fields: [customerId], references: [id], onDelete: Cascade)
+  responses   TicketResponse[]
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+}
+
+model TicketResponse {
+  id        String   @id @default(uuid())
+  message   String
+  ticketId  String
+  ticket    Ticket   @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  adminId   String
+  admin     User     @relation(fields: [adminId], references: [id])
+  createdAt DateTime @default(now())
 }

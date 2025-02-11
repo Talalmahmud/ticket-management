@@ -1,6 +1,7 @@
 import { ActionFunction, LoaderFunction } from "@remix-run/node";
 import { Form, Link, redirect } from "@remix-run/react";
 import { authenticator } from "~/utils/auth";
+import { commitSession, getSession, sessionStorage } from "~/utils/session";
 
 export default function Login() {
   return (
@@ -56,27 +57,52 @@ export default function Login() {
 }
 
 export const action: ActionFunction = async ({ request }) => {
-  const user = await authenticator.authenticate("user-pass", request);
-
   const session = await sessionStorage.getSession(
     request.headers.get("cookie")
   );
-  session.set("user", user);
 
-  throw redirect("/", {
-    headers: { "Set-Cookie": await sessionStorage.commitSession(session) },
-  });
+  try {
+    const user = (await authenticator.authenticate("form", request)) as {
+      id: string;
+      role: string;
+    };
+
+    session.set("userId", user.id);
+    session.set("role", user.role);
+    if (user?.role === "ADMIN") {
+      return redirect("/admin", {
+        headers: { "Set-Cookie": await commitSession(session) },
+      });
+    }
+    if (user?.role === "CUSTOMER") {
+      return redirect("/user", {
+        headers: { "Set-Cookie": await commitSession(session) },
+      });
+    }
+
+    return redirect("/login");
+  } catch (error) {
+    session.flash("error", (error as Error)?.message);
+    return redirect("/login", {
+      headers: { "Set-Cookie": await commitSession(session) },
+    });
+  }
 };
 
 export const loader: LoaderFunction = async ({ request }) => {
-  const session = await sessionStorage.getSession(
-    request.headers.get("Cookie")
-  );
-  const user = session.get("user");
+  const session = await getSession(request.headers.get("cookie"));
 
-  if (user) {
-    return redirect("/dashboard");
+  const userId = session.get("userId");
+  const userRole = session.get("role");
+
+  if (userId) {
+    if (userRole === "ADMIN") {
+      return redirect("/admin");
+    }
+    if (userRole === "CUSTOMER") {
+      return redirect("/user");
+    }
   }
 
-  return null;
+  return null; // Allow access to login page
 };

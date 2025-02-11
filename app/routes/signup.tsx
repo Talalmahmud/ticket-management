@@ -1,4 +1,37 @@
-import { Form, Link } from "@remix-run/react";
+import { Form, Link, redirect } from "@remix-run/react";
+import bcrypt from "bcryptjs";
+import { PrismaClient } from "@prisma/client";
+
+const prisma = new PrismaClient();
+
+import type { ActionFunction } from "@remix-run/node";
+
+export const action: ActionFunction = async ({ request }) => {
+  const formData = await request.formData();
+  const name = formData.get("name") as string;
+  const email = formData.get("email") as string;
+  const password = formData.get("password") as string;
+  const role = (formData.get("role") as string) || "USER";
+  if (!email || !password) {
+    return { error: "Email and password are required" };
+  }
+  const existingUser = await prisma.user.findUnique({ where: { email } });
+  if (existingUser) {
+    return { error: "User already exists" };
+  }
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  await prisma.user.create({
+    data: {
+      name: name,
+      email,
+      password: hashedPassword,
+      role: role === "ADMIN" ? "ADMIN" : "CUSTOMER",
+    },
+  });
+
+  return redirect("/login");
+};
 
 export default function Register() {
   return (
@@ -71,8 +104,8 @@ export default function Register() {
               className="w-full px-4 py-2 mt-1 border rounded-lg bg-white focus:ring focus:ring-indigo-300 focus:border-indigo-500"
             >
               <option value="">Select Role</option>
-              <option value="admin">Admin</option>
-              <option value="user">Customer</option>
+              <option value="ADMIN">Admin</option>
+              <option value="CUSTOMER">Customer</option>
             </select>
           </div>
 
@@ -85,7 +118,9 @@ export default function Register() {
           </button>
         </Form>
         <p>Already have an account. </p>
-        <Link className=" text-blue-600 hover:underline" to="/login">Login</Link>
+        <Link className=" text-blue-600 hover:underline" to="/login">
+          Login
+        </Link>
       </div>
     </div>
   );
