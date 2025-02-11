@@ -3,6 +3,7 @@ import { LoaderFunction, ActionFunction, redirect } from "@remix-run/node";
 type TicketStatus = "OPEN" | "RESOLVED" | "CLOSED";
 
 import { useLoaderData, Form } from "@remix-run/react";
+import Navbar from "~/components/navbar";
 import { prisma } from "~/utils/prisma";
 import { getSession } from "~/utils/session";
 
@@ -65,15 +66,7 @@ export default function AdminDashboard() {
 
   return (
     <div className="max-w-4xl mx-auto py-8">
-      <h1 className="text-3xl font-bold mb-6">Admin Ticket Management</h1>
-      <Form method="post" action="/logout">
-        <button
-          type="submit"
-          className="px-4 py-2 bg-red-500 text-white rounded-lg"
-        >
-          Logout
-        </button>
-      </Form>
+      <Navbar />
       {tickets.length === 0 ? (
         <p>No tickets available.</p>
       ) : (

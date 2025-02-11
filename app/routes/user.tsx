@@ -1,5 +1,6 @@
 import { LoaderFunction, ActionFunction, redirect } from "@remix-run/node";
 import { useLoaderData, Form } from "@remix-run/react";
+import Navbar from "~/components/navbar";
 import { prisma } from "~/utils/prisma";
 import { getSession } from "~/utils/session";
 
@@ -55,15 +56,7 @@ export default function UserDashboard() {
 
   return (
     <div className="max-w-4xl mx-auto py-8">
-      <h1 className="text-3xl font-bold mb-6">My Tickets</h1>
-      <Form method="post" action="/logout">
-        <button
-          type="submit"
-          className="px-4 py-2 bg-red-500 text-white rounded-lg"
-        >
-          Logout
-        </button>
-      </Form>
+      <Navbar />
 
       {/* Ticket Creation Form */}
       <Form method="post" className="bg-gray-100 p-4 rounded-lg mb-6 shadow">
